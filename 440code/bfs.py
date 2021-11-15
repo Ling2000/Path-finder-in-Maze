@@ -1,0 +1,99 @@
+# DFS
+import threading
+import time
+import random
+import matplotlib.pyplot as plt
+import numpy as np
+import numpy.matlib
+
+
+def maze(d, p):     # Generate a maze with a cell of fire
+    m = np.random.binomial(1, 1 - p, size=(d, d))
+    m[0, 0] = 1
+    m[d - 1, d - 1] = 1
+    plt.matshow(m, cmap=plt.cm.gray)
+    plt.text(x=0, y=0, s='s')
+    plt.text(x=d - 1, y=d - 1, s='g')
+    plt.show()
+    return m
+
+
+def bfs(m, s, e):
+    rr, cc = e  # get the row and col for end point
+    dd = rr + 1  # get the dimension
+    que = [s]
+    closedSet = [[0, 0]]  # accessed points
+    path = {s: s}  # use dict  to record the short path
+    n = np.matlib.rand(int(a[0]), int(a[0]))        # get a new float type matrix for showing path
+    i = 0
+    while i < int(a[0]):
+        j = 0
+        while j < int(a[0]):
+            n[i, j] = mat[i, j]
+            j = j + 1
+            pass
+        i = i + 1
+
+    while que:  # lst not null (if null that means no way out)
+        now = que.pop(0)  # pop the front and new=the popped one
+        if now == e:
+            print("you reach the goal")
+            tr = rr
+            tc = cc
+            while tr != 0 or tc != 0:  # use dict  to record the short path from end to start until reach (0,0)
+                way = path[(tr,tc)]
+                rrr, ccc = way
+                n[rrr, ccc] = 0.5  # the way out
+                tr,tc=path[(tr,tc)]  # value become the key now
+                # print(path[(tr,tc)])
+            n[int(rr), int(cc)] = 0.5
+            plt.matshow(n, cmap=plt.cm.gray)
+            plt.show()
+            return True
+
+        row, col = now
+
+        if col + 1 < dd and m[row][col + 1] == 1 and [row, col + 1] not in closedSet:  # right
+            que.append((row, col + 1))
+            closedSet.append([row, col + 1])
+            new = (row, col + 1)
+            path[new] = now  # for print path
+
+        if row + 1 < dd and m[row + 1][col] == 1 and [row + 1, col] not in closedSet:  # down
+            que.append((row + 1, col))
+            closedSet.append([row + 1, col])
+            new = (row + 1, col)
+            path[new] = now  # for print path
+
+        if col - 1 > -1 and m[row][col - 1] == 1 and [row, col - 1] not in closedSet:  # left
+            que.append((row, col - 1))
+            closedSet.append([row, col - 1])
+            new = (row, col - 1)
+            path[new] = now  # for print path
+
+        if row - 1 > -1 and m[row - 1][col] == 1 and [row - 1, col] not in closedSet:  # up
+            que.append((row - 1, col))
+            closedSet.append([row - 1, col])
+            new = (row - 1, col)
+            path[new] = now  # for print path
+
+    if len(que) == 0:
+        print("no way out")
+        return False
+
+
+if __name__ == "__main__":
+    print("Please input in that form: dim p")
+    a = list(map(float, input(' ').split()))
+    mat = maze(int(a[0]), a[1])
+    # print(mat)
+    start = (0, 0)
+    end = (a[0] - 1, a[0] - 1)
+    time_begin = time.time()
+    if bfs(mat, start, end):
+        print("BFS: This maze is reachable")
+    else:
+        print("BFS: This maze is NOT reachable")
+    time_end = time.time()
+    timme = time_end - time_begin
+    print('time:', timme)
